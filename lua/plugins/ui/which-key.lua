@@ -2,12 +2,15 @@ return {
   "folke/which-key.nvim",
   opts = {
     spec = {
-      { "<leader>r", group = "Kulala", icon = "󰜏 " },
-      { "<leader>t", group = "Tools", icon = "󱁤" },
-      { "<leader>ci", group = "Compiler", icon = " " },
-      { "<leader>cw", group = "Wildcat", icon = "" },
-      { "<leader>tt", group = "Leetcode", icon = "󰩐" },
-      { "<leader>tp", group = "Preview", icon = "" },
+      { "<leader>ci", group = "compiler", icon = " " },
+      { "<leader>k", group = "toolkit", icon = "󱁤" },
+      { "<leader>kp", group = "preview", icon = "" },
+      { "<leader>kt", group = "leetcode", icon = "󰩐" },
+      { "<leader>o", group = "overseer", icon = " " },
+      { "<leader>r", group = "backend", icon = " " },
+      { "<leader>rr", group = "kulala", icon = " " },
+      { "<leader>rs", group = "spring", icon = " " },
+      { "<leader>rw", group = "wildcat", icon = "" },
       { "<leader>y", icon = "󰇥" },
       { "<leader>Y", icon = "󰇥" },
       -- Hide disabled / unwanted keys
