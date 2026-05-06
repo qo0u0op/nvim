@@ -51,9 +51,10 @@ return {
         -- Setting ignore sicret files to disable codeium.
         local ignore_patterns = {
           "/home/d0w0b/.ssh/",
+          "/home/d0w0b/.config/ssh/",
           "/home/d0w0b/.local/share/gnupg/",
           "/home/d0w0b/.local/share/kwalletd/",
-          "environment.zsh$", -- The '$' anchors the match to the end of the string.
+          "env.fish$", -- The '$' anchors the match to the end of the string.
         }
 
         local buf_name = vim.api.nvim_buf_get_name(bufnr)
@@ -83,7 +84,7 @@ return {
         ["."] = false,
       },
       -- List of directories and files to detect workspace root directory for Windsurf Chat
-      root_dir = { ".bzr", ".git", ".hg", ".svn", "_FOSSIL_", "package.json" },
+      root_dir = { ".bzr", ".git", ".hg", ".svn", "_FOSSIL_", "package.json", "mise.toml" },
     },
     config = function(_, opts)
       require("neocodeium").setup(opts)

@@ -3,3 +3,6 @@
 -- Add any additional options here
 vim.opt.wrap = true
 vim.opt.colorcolumn = { "80", "120" }
+
+-- Root directory detection
+vim.g.root_spec = { "lsp", { ".git", "lua", "pom.xml", "mise.toml" }, "cwd" }
