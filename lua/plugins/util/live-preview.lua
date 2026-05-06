@@ -9,8 +9,8 @@ return {
   },
   ft = { "markdown", "svg", "html", "css", "javascript" },
   keys = {
-    { "<leader>tpl", "<cmd>LivePreview start<cr>", desc = "Start LivePreview" },
-    { "<leader>tpc", "<cmd>LivePreview close<cr>", desc = "Close LivePreview" },
+    { "<leader>kpl", "<cmd>LivePreview start<cr>", desc = "Start LivePreview" },
+    { "<leader>kpc", "<cmd>LivePreview close<cr>", desc = "Close LivePreview" },
   },
   opts = {
     browser = "chromium",

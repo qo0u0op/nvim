@@ -22,7 +22,7 @@ return {
       },
     },
     keys = {
-      { "<leader>ttT", "<cmd>Leet<cr>", desc = "LeetCode Menu" },
+      { "<leader>ktT", "<cmd>Leet<cr>", desc = "LeetCode Menu" },
     },
     config = function(_, opts)
       require("leetcode").setup(opts)
@@ -34,12 +34,12 @@ return {
           local wk = require("which-key")
           -- 設定僅限於該 Buffer 的快捷鍵
           wk.add({
-            { "<leader>tt", group = "LeetCode", buffer = true },
-            { "<leader>ttt", "<cmd>Leet test<cr>", desc = "LeetCode Test", buffer = true },
-            { "<leader>tts", "<cmd>Leet submit<cr>", desc = "LeetCode Submit", buffer = true },
-            { "<leader>tti", "<cmd>Leet info<cr>", desc = "LeetCode Info", buffer = true },
-            { "<leader>ttc", "<cmd>Leet console<cr>", desc = "LeetCode Console", buffer = true },
-            { "<leader>ttd", "<cmd>Leet desc<cr>", desc = "Toggle Description", buffer = true },
+            { "<leader>kt", group = "LeetCode", buffer = true },
+            { "<leader>ktt", "<cmd>Leet test<cr>", desc = "LeetCode Test", buffer = true },
+            { "<leader>kts", "<cmd>Leet submit<cr>", desc = "LeetCode Submit", buffer = true },
+            { "<leader>kti", "<cmd>Leet info<cr>", desc = "LeetCode Info", buffer = true },
+            { "<leader>ktc", "<cmd>Leet console<cr>", desc = "LeetCode Console", buffer = true },
+            { "<leader>ktd", "<cmd>Leet desc<cr>", desc = "Toggle Description", buffer = true },
           })
         end,
       })

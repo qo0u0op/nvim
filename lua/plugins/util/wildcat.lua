@@ -10,17 +10,17 @@ return {
   },
   keys = {
     {
-      "<leader>cwr",
+      "<leader>rwr",
       "<cmd>WildcatRun<cr>",
       desc = "Wildcat Run",
     },
     {
-      "<leader>cwd",
+      "<leader>rwd",
       "<cmd>WildcatDown<cr>",
       desc = "Wildcat Down",
     },
     {
-      "<leader>cwc",
+      "<leader>rwc",
       "<cmd>WildcatClean<cr>",
       desc = "Wildcat Clean",
     },

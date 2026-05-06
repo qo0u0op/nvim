@@ -11,7 +11,7 @@ return {
     "DBUIFindBuffer",
   },
   keys = {
-    { "<leader>td", "<cmd>DBUIToggle<cr>", desc = "Database UI" },
+    { "<leader>rd", "<cmd>DBUIToggle<cr>", desc = "Database UI" },
   },
   init = function()
     vim.g.db_ui_use_nerd_fonts = 1
