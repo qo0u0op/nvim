@@ -96,6 +96,13 @@ return {
         end,
         desc = "Sidekick Toggle Gemini",
       },
+      {
+        "<leader>ax",
+        function()
+          require("sidekick.cli").toggle({ name = "codex", focus = true })
+        end,
+        desc = "Sidekick Toggle Codex",
+      },
     },
   },
 }

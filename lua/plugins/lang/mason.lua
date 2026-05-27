@@ -31,6 +31,7 @@ return {
         "shellcheck",
         "shfmt",
         "sqlfluff",
+        "sqlls",
         "stylua",
         "taplo",
         "vtsls",
