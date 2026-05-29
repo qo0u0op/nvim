@@ -20,3 +20,4 @@ end
 vim.opt.spell = true
 vim.opt.spelloptions = "camel"
 vim.opt.spelllang = { "en", "cjk" } -- 英文拼字 + 不標記中文錯誤
+vim.g.omni_sql_no_default_maps = 1
