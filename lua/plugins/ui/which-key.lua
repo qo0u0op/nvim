@@ -10,7 +10,6 @@ return {
       { "<leader>r", group = "backend", icon = " " },
       { "<leader>rr", group = "kulala", icon = " " },
       { "<leader>rs", group = "spring", icon = " " },
-      { "<leader>rw", group = "wildcat", icon = "" },
       { "<leader>y", icon = "󰇥" },
       { "<leader>Y", icon = "󰇥" },
       -- Hide disabled / unwanted keys
