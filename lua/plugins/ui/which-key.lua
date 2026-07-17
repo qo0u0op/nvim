@@ -2,6 +2,7 @@ return {
   "folke/which-key.nvim",
   opts = {
     spec = {
+      { "<leader>a", group = "AI", icon = "󰚩 " },
       { "<leader>ci", group = "compiler", icon = " " },
       { "<leader>k", group = "toolkit", icon = "󱁤" },
       { "<leader>kp", group = "preview", icon = "" },
