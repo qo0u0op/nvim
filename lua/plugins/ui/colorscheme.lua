@@ -1,3 +1,5 @@
+local is_ssh = vim.env.SSH_TTY ~= nil or vim.env.SSH_CONNECTION ~= nil
+
 return {
   -- add colorscheme:
   {
@@ -8,7 +10,7 @@ return {
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "catppuccin-mocha",
+      colorscheme = is_ssh and "catppuccin-latte" or "catppuccin-mocha",
     },
   },
 }
