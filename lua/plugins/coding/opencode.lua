@@ -6,11 +6,50 @@ return {
     vim.g.opencode_opts = {
       server = {
         start = function()
-          vim.fn.jobstart({
-            "herdr", "agent", "start", "opencode-server",
-            "--cwd", vim.fn.getcwd(),
-            "--split", "right",
-            "--", "opencode", "--port",
+          local function fallback()
+            vim.cmd("vsplit | terminal opencode --port")
+            local buf = vim.api.nvim_get_current_buf()
+            vim.api.nvim_create_autocmd("TermClose", {
+              buffer = buf,
+              once = true,
+              callback = function()
+                if vim.api.nvim_buf_is_valid(buf) then
+                  vim.api.nvim_buf_delete(buf, { force = true })
+                end
+              end,
+            })
+            vim.cmd("wincmd p")
+          end
+
+          if vim.fn.executable("herdr") == 0 then
+            return fallback()
+          end
+
+          vim.fn.jobstart({ "herdr", "pane", "list" }, {
+            stdout_buffered = true,
+            on_exit = function(_, code)
+              if code ~= 0 then
+                return fallback()
+              end
+              vim.fn.jobstart({
+                "herdr", "pane", "split",
+                "--current", "--direction", "right",
+                "--cwd", vim.fn.getcwd(), "--no-focus",
+              }, {
+                stdout_buffered = true,
+                on_stdout = function(_, data)
+                  local output = table.concat(data or {}, "")
+                  local ok, result = pcall(vim.fn.json_decode, output)
+                  if not (ok and result and result.result and result.result.pane) then
+                    return fallback()
+                  end
+                  vim.fn.jobstart({
+                    "herdr", "pane", "run", result.result.pane.pane_id,
+                    "opencode", "--port",
+                  })
+                end,
+              })
+            end,
           })
         end,
       },
