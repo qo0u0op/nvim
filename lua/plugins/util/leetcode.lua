@@ -17,7 +17,7 @@ return {
         translate_problems = true,
       },
       storage = {
-        home = "~/Documents/workspace/leetcode",
+        home = "~/Documents/Workspace/leetcode",
         cache = vim.fn.stdpath("cache") .. "/leetcode",
       },
     },
