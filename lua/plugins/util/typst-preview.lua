@@ -5,5 +5,7 @@ return {
   keys = {
     { "<leader>kpt", "<cmd>TypstPreviewToggle<cr>", desc = "Typst Preview" },
   },
-  opts = {}, -- lazy.nvim will implicitly calls `setup {}`
+  opts = {
+    open_cmd = "terminal-browser open %s --split right --size 0.5",
+  },
 }

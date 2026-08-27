@@ -25,9 +25,6 @@ return {
       { "<leader>|", hidden = true },
       { "<leader>cd", hidden = true },
       { "<C-w><C-d>", hidden = true },
-      { "<leader>d2", hidden = true },
-      { "<leader>rd2", hidden = true },
-      { "<leader>yd2", hidden = true },
     },
   },
 }

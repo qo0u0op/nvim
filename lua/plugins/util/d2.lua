@@ -1,7 +1,6 @@
 return {
-  "terrastruct/d2-vim",
-  ft = { "d2" },
-  keys = {
-    { "<leader>kpd", "<cmd>D2PreviewSelection<cr>", desc = "D2 Preview" },
-  },
+  "ravsii/tree-sitter-d2",
+  dependencies = { "nvim-treesitter/nvim-treesitter" },
+  version = "*", -- use the latest git tag instead of main
+  build = "make nvim-install",
 }

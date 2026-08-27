@@ -21,9 +21,6 @@ disable("n", "<leader>|")
 disable("n", "<leader>`")
 disable("n", "<leader>D")
 disable("n", "<leader>L")
-disable("n", "<leader>d2")
-disable("n", "<leader>rd2")
-disable("n", "<leader>yd2")
 
 -- Restore / Redefine window management
 map("n", "<C-w>d", "<C-w>c", { desc = "Delete window" })
