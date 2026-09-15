@@ -32,9 +32,15 @@ return {
                 return fallback()
               end
               vim.fn.jobstart({
-                "herdr", "pane", "split",
-                "--current", "--direction", "right",
-                "--cwd", vim.fn.getcwd(), "--no-focus",
+                "herdr",
+                "pane",
+                "split",
+                "--current",
+                "--direction",
+                "right",
+                "--cwd",
+                vim.fn.getcwd(),
+                "--no-focus",
               }, {
                 stdout_buffered = true,
                 on_stdout = function(_, data)
@@ -44,8 +50,12 @@ return {
                     return fallback()
                   end
                   vim.fn.jobstart({
-                    "herdr", "pane", "run", result.result.pane.pane_id,
-                    "opencode", "--port",
+                    "herdr",
+                    "pane",
+                    "run",
+                    result.result.pane.pane_id,
+                    "opencode",
+                    "--port",
                   })
                 end,
               })
@@ -72,10 +82,10 @@ return {
       return require("opencode").operator("@this ") .. "_"
     end, { desc = "Append line to OpenCode", expr = true })
 
-    vim.keymap.set("n", "<M-C-u>", function()
+    vim.keymap.set("n", "<A-C-u>", function()
       require("opencode").command("session.half.page.up")
     end, { desc = "Scroll OpenCode up" })
-    vim.keymap.set("n", "<M-C-d>", function()
+    vim.keymap.set("n", "<A-C-d>", function()
       require("opencode").command("session.half.page.down")
     end, { desc = "Scroll OpenCode down" })
   end,
