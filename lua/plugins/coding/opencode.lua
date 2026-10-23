@@ -1,13 +1,15 @@
 return {
   "nickjvandyke/opencode.nvim",
-  version = "*", -- Latest stable release
+  -- HTTPS because this machine has no SSH key for the global lazy url_format.
+  url = "https://github.com/nickjvandyke/opencode.nvim.git",
+  -- version = "*", -- Stable release is v1-only; main supports OpenCode v2
   config = function()
     ---@type opencode.Opts
     vim.g.opencode_opts = {
       server = {
         start = function()
           local function fallback()
-            vim.cmd("vsplit | terminal opencode --port")
+            vim.cmd("vsplit | terminal opencode")
             local buf = vim.api.nvim_get_current_buf()
             vim.api.nvim_create_autocmd("TermClose", {
               buffer = buf,
@@ -55,7 +57,6 @@ return {
                     "run",
                     result.result.pane.pane_id,
                     "opencode",
-                    "--port",
                   })
                 end,
               })
@@ -66,6 +67,34 @@ return {
     }
 
     vim.o.autoread = true -- Required for `vim.g.opencode_opts.events.reload`
+
+    -- OpenCode v2 does not persist an empty TUI session, so `/api/session`
+    -- returns nothing until the first prompt. Create one on demand.
+    local Server = require("opencode.server")
+    local Promise = require("opencode.promise")
+
+    function Server:create_session()
+      return self:request("/api/session", "POST", {
+        location = { directory = vim.fn.getcwd() },
+      }):next(function(response)
+        local session = response and response.data
+        if session and session.id then
+          vim.notify("OpenCode: created a new session for " .. vim.fn.getcwd(), vim.log.levels.INFO)
+          return session
+        end
+        return Promise.reject("Failed to create an OpenCode session for `" .. vim.fn.getcwd() .. "`")
+      end)
+    end
+
+    local resolve_session = Server.resolve_session
+    function Server:resolve_session()
+      return resolve_session(self):catch(function(err)
+        if type(err) == "string" and err:find("No OpenCode session found", 1, true) then
+          return self:create_session()
+        end
+        return Promise.reject(err)
+      end)
+    end
 
     -- Recommended/example keymaps
     vim.keymap.set({ "n", "x" }, "<leader>ao", function()
@@ -81,12 +110,5 @@ return {
     vim.keymap.set("n", "goo", function()
       return require("opencode").operator("@this ") .. "_"
     end, { desc = "Append line to OpenCode", expr = true })
-
-    vim.keymap.set("n", "<A-C-u>", function()
-      require("opencode").command("session.half.page.up")
-    end, { desc = "Scroll OpenCode up" })
-    vim.keymap.set("n", "<A-C-d>", function()
-      require("opencode").command("session.half.page.down")
-    end, { desc = "Scroll OpenCode down" })
   end,
 }
