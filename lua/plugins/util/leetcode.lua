@@ -25,6 +25,26 @@ return {
       { "<leader>ktT", "<cmd>Leet<cr>", desc = "LeetCode Menu" },
     },
     config = function(_, opts)
+      -- LeetCode's judge endpoints reject curl's HTTP/2 fingerprint via
+      -- Cloudflare. Force HTTP/1.1 for leetcode requests only.
+      if not vim.g.leetcode_http1_patch then
+        vim.g.leetcode_http1_patch = true
+        local curl = require("plenary.curl")
+        for _, method in ipairs({ "get", "post", "put" }) do
+          local original = curl[method]
+          curl[method] = function(url, options)
+            if type(url) == "string" and url:match("^https://leetcode%.") then
+              options = options or {}
+              if type(options.raw) ~= "table" then
+                options.raw = {}
+              end
+              table.insert(options.raw, "--http1.1")
+            end
+            return original(url, options)
+          end
+        end
+      end
+
       require("leetcode").setup(opts)
       -- 使用路徑匹配：當開啟路徑在 ~/leetcode/ 下的任何檔案時觸發
       vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
