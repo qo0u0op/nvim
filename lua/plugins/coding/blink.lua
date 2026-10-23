@@ -20,8 +20,21 @@ return {
         ["<C-f>"] = { "scroll_documentation_down", "fallback" },
 
         ["<C-k>"] = { "show_signature", "hide_signature", "fallback" },
+
+        -- Manual Minuet completion menu (does not auto-trigger).
+        ["<A-y>"] = {
+          function(cmp)
+            local ok, minuet = pcall(require, "minuet")
+            if not (ok and minuet.config) then
+              vim.notify("Minuet is not ready; press <leader>aa first", vim.log.levels.WARN)
+              return
+            end
+            minuet.make_blink_map()[1](cmp)
+          end,
+        },
       },
       completion = {
+        trigger = { prefetch_on_insert = false },
         keyword = {
           -- 'prefix' will fuzzy match on the text before the cursor
           -- 'full' will fuzzy match on the text before _and_ after the cursor
@@ -51,7 +64,16 @@ return {
         --   buffer = { score_offset = 2 },
         --   snippets = { score_offset = 1 },
         --   path = { score_offset = 0 },
-        -- },
+        -- Manual only; not in `default` to avoid double requests.
+        providers = {
+          minuet = {
+            name = "minuet",
+            module = "minuet.blink",
+            async = true,
+            timeout_ms = 2000,
+            score_offset = 50,
+          },
+        },
       },
     },
   },
