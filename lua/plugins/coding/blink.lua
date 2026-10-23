@@ -4,7 +4,7 @@ return {
     opts = {
       keymap = {
         preset = "none",
-        ["<C-Space>"] = { "show", "show_documentation", "hide_documentation" },
+        ["<C-CR>"] = { "show", "show_documentation", "hide_documentation" },
         -- ['<ESC>'] = { 'hide', 'fallback' },
         ["<CR>"] = { "accept", "fallback" },
 
