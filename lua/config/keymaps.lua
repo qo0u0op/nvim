@@ -31,3 +31,9 @@ map("n", "<leader>w<", "<C-w><", { desc = "Decrease width" })
 map("n", "<leader>xd", function()
   vim.diagnostic.open_float()
 end, { desc = "Line Diagnostics" })
+
+-- 手動覆寫 AI 補全後端（硬體判斷失準時的逃生口，需重開 nvim）
+map("n", "<leader>aA", function()
+  local current = require("config.ai").provider()
+  require("config.ai").override(current == "minuet" and "laptop" or "desktop")
+end, { desc = "Override AI backend" })

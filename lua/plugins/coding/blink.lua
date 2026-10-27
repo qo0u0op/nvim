@@ -21,9 +21,19 @@ return {
 
         ["<C-k>"] = { "show_signature", "hide_signature", "fallback" },
 
-        -- Manual Minuet completion menu (does not auto-trigger).
+        -- Manual AI completion (does not auto-trigger). Backend 由 config.ai 決定。
         ["<A-y>"] = {
           function(cmp)
+            if require("config.ai").provider() == "neocodeium" then
+              local ok, neocodeium = pcall(require, "neocodeium")
+              if not ok then
+                vim.notify("NeoCodeium is not ready; press <leader>aa first", vim.log.levels.WARN)
+                return
+              end
+              neocodeium.cycle_or_complete()
+              return
+            end
+
             local ok, minuet = pcall(require, "minuet")
             if not (ok and minuet.config) then
               vim.notify("Minuet is not ready; press <leader>aa first", vim.log.levels.WARN)

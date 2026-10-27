@@ -1,3 +1,7 @@
+-- 桌機軌：llamastash + 本機 llama.cpp，完全離線。
+-- 筆電不載入這個 spec（筆電走 neocodeium.lua），由 config.ai 判斷。
+local ai = require("config.ai")
+
 -- Fork includes accept_word (ported from PR #87).
 local model = "qwen2.5-coder-3b"
 local started_here = false
@@ -73,6 +77,9 @@ end
 return {
   {
     "qo0u0op/minuet-ai.nvim",
+    cond = function()
+      return ai.provider() == "minuet"
+    end,
     lazy = true,
     cmd = "Minuet",
     keys = {
