@@ -34,11 +34,12 @@ end
 
 ---@return boolean
 function M.is_laptop()
-  if vim.g.ai_profile_override == "laptop" then
-    return true
-  elseif vim.g.ai_profile_override == "desktop" then
-    return false
-  end
+  -- 手動覆寫已停用
+  -- if vim.g.ai_profile_override == "laptop" then
+  --   return true
+  -- elseif vim.g.ai_profile_override == "desktop" then
+  --   return false
+  -- end
 
   local chassis = chassis_type()
   if chassis and MOBILE_CHASSIS[chassis] then
@@ -54,15 +55,15 @@ function M.provider()
   return M.is_laptop() and "neocodeium" or "minuet"
 end
 
----手動覆寫 profile。lazy.nvim 的 cond 只在啟動時評估，改完要重開 nvim。
+---手動覆寫 profile（已停用）
 ---@param name "desktop"|"laptop"
-function M.override(name)
-  if name ~= "desktop" and name ~= "laptop" then
-    vim.notify(("AI profile 只能是 desktop 或 laptop，收到 %q"):format(name), vim.log.levels.ERROR)
-    return
-  end
-  vim.g.ai_profile_override = name
-  vim.notify(("AI profile 已覆寫為 %s，請重開 nvim"):format(name), vim.log.levels.WARN)
-end
+-- function M.override(name)
+--   if name ~= "desktop" and name ~= "laptop" then
+--     vim.notify(("AI profile 只能是 desktop 或 laptop，收到 %q"):format(name), vim.log.levels.ERROR)
+--     return
+--   end
+--   vim.g.ai_profile_override = name
+--   vim.notify(("AI profile 已覆寫為 %s，請重開 nvim"):format(name), vim.log.levels.WARN)
+-- end
 
 return M
