@@ -21,8 +21,14 @@ return {
             return
           end
 
-          vim.cmd("NeoCodeium toggle")
-          vim.notify("NeoCodeium: toggled", vim.log.levels.INFO)
+          -- bang = true：停止補全「而且」殺掉 Windsurf language server
+          -- （false 只會停請求，server 仍在背景跑）
+          local enabled = require("neocodeium.options").options.enabled
+          require("neocodeium.commands").toggle(true)
+          vim.notify(
+            enabled and "NeoCodeium: stopped (server killed)" or "NeoCodeium: started",
+            vim.log.levels.INFO
+          )
         end,
         mode = "n",
         desc = "Toggle AI completion",
@@ -138,6 +144,18 @@ return {
       vim.api.nvim_set_hl(0, "NeoCodeiumSuggestion", { fg = "#627C62" })
       vim.api.nvim_set_hl(0, "NeoCodeiumLabel", { link = "DiagnosticInfo", reverse = true })
       vim.api.nvim_set_hl(0, "NeoCodeiumSingleLineLabel", { fg = "#808080", bold = true })
+
+      -- plugin 自己沒有離開清理；這裡明確殺掉 language server，
+      -- 避免 nvim 關掉後行程還留著（那是唯一會持續連外的東西）。
+      vim.api.nvim_create_autocmd("VimLeavePre", {
+        group = vim.api.nvim_create_augroup("neocodeium_cleanup", { clear = true }),
+        callback = function()
+          local ok, server = pcall(require, "neocodeium.server")
+          if ok and server.pid then
+            server:stop()
+          end
+        end,
+      })
     end,
   },
 }
