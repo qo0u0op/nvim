@@ -1,6 +1,7 @@
 -- 筆電軌：Windsurf（前 Codeium）免費層，Tab autocomplete 無限。
 -- 只在這台機器是需要雲端補全的筆電時載入；桌機走 minuet.lua。
 local ai = require("config.ai")
+local started = false
 
 return {
   {
@@ -14,15 +15,12 @@ return {
       {
         "<leader>aa",
         function()
-          require("neocodeium") -- 觸發 lazy 載入，config 會啟動 windsurf server
-          vim.notify("NeoCodeium: started", vim.log.levels.INFO)
-        end,
-        mode = "n",
-        desc = "Start AI completion",
-      },
-      {
-        "<leader>ac",
-        function()
+          if not started then
+            started = true
+            vim.notify("NeoCodeium: started", vim.log.levels.INFO)
+            return
+          end
+
           vim.cmd("NeoCodeium toggle")
           vim.notify("NeoCodeium: toggled", vim.log.levels.INFO)
         end,
@@ -57,10 +55,10 @@ return {
       {
         "<A-l>",
         function()
-          require("neocodeium").cycle(1)
+          require("neocodeium").cycle_or_complete()
         end,
         mode = "i",
-        desc = "Next suggestion",
+        desc = "Next suggestion / request",
       },
       {
         "<A-h>",
@@ -69,14 +67,6 @@ return {
         end,
         mode = "i",
         desc = "Prev suggestion",
-      },
-      {
-        "<A-r>",
-        function()
-          require("neocodeium").cycle_or_complete()
-        end,
-        mode = "i",
-        desc = "Cycle or request suggestion",
       },
       {
         "<A-x>",
@@ -90,6 +80,9 @@ return {
     opts = {
       -- 在行號欄顯示建議數量
       show_label = true,
+      -- 筆電外出時減少上傳量與請求頻率
+      max_lines = 4000,
+      debounce = true,
       filetypes = {
         help = false,
         gitcommit = false,
@@ -99,10 +92,29 @@ return {
       -- 就算專案是公開的 AGPL，這些路徑也不該送出去
       filter = function(bufnr)
         local ignore_patterns = {
-          "/.ssh/",
+          "/%.ssh/",
+          "/%.config/ssh/",
           "/gnupg/",
           "/kwalletd/",
           "env%.fish$",
+          "/%.env$",
+          "/%.env%.",
+          "/secrets/",
+          "/%.secrets/",
+          "%.pem$",
+          "%.key$",
+          "%.p12$",
+          "%.pfx$",
+          "/%.aws/",
+          "/%.config/gh/",
+          "/%.docker/config%.json$",
+          "/id_rsa",
+          "/id_ed25519",
+          "/credentials",
+          "/%.npmrc$",
+          "/%.pypirc$",
+          "/%.git%-credentials$",
+          "/%.netrc$",
         }
 
         local buf_name = vim.api.nvim_buf_get_name(bufnr)

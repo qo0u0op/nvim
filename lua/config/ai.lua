@@ -5,7 +5,16 @@
 local M = {}
 
 -- 8 = Portable, 9 = Laptop, 10 = Notebook, 14 = Sub Notebook
-local MOBILE_CHASSIS = { [8] = true, [9] = true, [10] = true, [14] = true }
+-- 30 = Tablet, 31 = Convertible, 32 = Detachable
+local MOBILE_CHASSIS = {
+  [8] = true,
+  [9] = true,
+  [10] = true,
+  [14] = true,
+  [30] = true,
+  [31] = true,
+  [32] = true,
+}
 
 ---@return integer|nil
 local function chassis_type()
@@ -32,10 +41,10 @@ function M.is_laptop()
   end
 
   local chassis = chassis_type()
-  if chassis then
-    return MOBILE_CHASSIS[chassis] or false
+  if chassis and MOBILE_CHASSIS[chassis] then
+    return true
   end
-  -- 讀不到 DMI 時退而求其次
+  -- DMI 說桌機但實際有電池（或讀不到 DMI）時，仍視為筆電
   return has_battery()
 end
 
