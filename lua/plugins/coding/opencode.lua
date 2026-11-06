@@ -140,6 +140,23 @@ local nvim_tui = {
     vim.b[buf].opencode_tui = true
     vim.b[buf].opencode_session = session_id
 
+    -- TUI 視窗常常停在 normal mode（尤其從其他視窗點進來時），此時 PgUp/PgDn
+    -- 與滾輪只會在空的 terminal buffer 上滾。改成直接把翻頁鍵送進 TUI。
+    for _, binding in ipairs({
+      { "<PageUp>", "\x1b[5~", "Scroll OpenCode up" },
+      { "<PageDown>", "\x1b[6~", "Scroll OpenCode down" },
+      { "<ScrollWheelUp>", "\x1b[5~", "Scroll OpenCode up" },
+      { "<ScrollWheelDown>", "\x1b[6~", "Scroll OpenCode down" },
+    }) do
+      local key, sequence, desc = binding[1], binding[2], binding[3]
+      vim.keymap.set("n", key, function()
+        local channel = vim.b[buf].terminal_job_id
+        if channel then
+          vim.api.nvim_chan_send(channel, sequence)
+        end
+      end, { buffer = buf, desc = desc })
+    end
+
     vim.api.nvim_create_autocmd("TermClose", {
       buffer = buf,
       once = true,
@@ -509,30 +526,6 @@ end
 -- OpenCode server／session 解析
 --------------------------------------------------------------------------------
 
----找出目前可連線的 server；不會啟動新的 service。
----@return Promise<opencode.server.Server>
-local function connect_existing_server()
-  local Promise = require("opencode.promise")
-  local Server = require("opencode.server")
-
-  if Server.connected then
-    return Promise.resolve(Server.connected)
-  end
-
-  local registrations = require("opencode.server.discovery").registrations()
-  local function try(i)
-    local registration = registrations[i]
-    if not registration then
-      return Promise.reject("No OpenCode server found")
-    end
-    return Server.new(registration.url, { password = registration.password }):catch(function()
-      return try(i + 1)
-    end)
-  end
-
-  return try(1)
-end
-
 ---@param sessions opencode.server.Session[]?
 ---@return opencode.server.Session?
 local function newest_session(sessions)
@@ -650,15 +643,6 @@ local function preferred_session(server)
   end)
 end
 
----@return Promise<opencode.server.Session?>
-local function resolve_target_session()
-  return connect_existing_server()
-    :next(preferred_session)
-    :catch(function()
-      return require("opencode.promise").resolve(nil)
-    end)
-end
-
 --------------------------------------------------------------------------------
 -- 開啟 TUI
 --------------------------------------------------------------------------------
@@ -670,8 +654,13 @@ local function finish_opening()
 end
 
 ---@param session_id string?
-local function open_tui(session_id)
+---@param force boolean? 已經在外層決定要開時，略過「已有 TUI」的檢查
+local function open_tui(session_id, force)
   if tui_opening then
+    return
+  end
+
+  if not force and tui_snapshot().any then
     return
   end
 
@@ -693,17 +682,29 @@ local function open_tui(session_id)
   fallback()
 end
 
-local function ensure_tui()
+---@param create boolean? 沒有任何對話時，是否先建立一個（ask/operator 需要）
+local function ensure_tui(create)
+  local Promise = require("opencode.promise")
+
   if tui_opening then
     return
   end
 
-  -- 先解析目標 session，讓新開的 TUI 接續最近一次對話；解析失敗（沒有
-  -- server）才開一般的 TUI，交給插件自己的 start() 去拉起 service。
+  -- 先解析目標 session（需要時順便拉起 service）。沒有對話就先建立，這樣
+  -- 新開的 TUI 可以直接用 --session 接上，而不是停在 new session。
   tui_opening = true
   finish_opening()
 
-  resolve_target_session()
+  require("opencode.server.discovery")
+    .get()
+    :next(function(server)
+      return preferred_session(server):next(function(session)
+        if session or not create then
+          return Promise.resolve(session)
+        end
+        return server:create_session()
+      end)
+    end)
     :next(function(session)
       local snapshot = tui_snapshot()
       -- 該對話已經顯示在某個 TUI 就不重開；同 cwd 的外部 TUI 也算。
@@ -719,7 +720,7 @@ local function ensure_tui()
         return
       end
 
-      open_tui(session and session.id or nil)
+      open_tui(session and session.id or nil, true)
     end)
     :catch(function()
       tui_opening = false
@@ -814,7 +815,7 @@ return {
 
     -- Recommended/example keymaps
     vim.keymap.set({ "n", "x" }, "<leader>ao", function()
-      ensure_tui()
+      ensure_tui(true)
       require("opencode").ask("@this: ")
     end, { desc = "Ask OpenCode…" })
     vim.keymap.set({ "n", "x" }, "<leader>as", function()
@@ -823,11 +824,11 @@ return {
     end, { desc = "Select OpenCode…" })
 
     vim.keymap.set({ "n", "x" }, "go", function()
-      ensure_tui()
+      ensure_tui(true)
       return require("opencode").operator("@this ")
     end, { desc = "Append range to OpenCode", expr = true })
     vim.keymap.set("n", "goo", function()
-      ensure_tui()
+      ensure_tui(true)
       return require("opencode").operator("@this ") .. "_"
     end, { desc = "Append line to OpenCode", expr = true })
   end,
