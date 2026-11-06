@@ -6,6 +6,7 @@ return {
       { "<leader>ci", group = "compiler", icon = " " },
       { "<leader>k", group = "toolkit", icon = "󱁤" },
       { "<leader>kp", group = "preview", icon = "" },
+      { "<leader>ke", group = "exercism", icon = "󰅩" },
       { "<leader>kt", group = "leetcode", icon = "󰩐" },
       { "<leader>o", group = "overseer", icon = " " },
       { "<leader>r", group = "backend", icon = " " },
