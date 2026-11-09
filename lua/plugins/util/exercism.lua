@@ -30,6 +30,21 @@ return {
     -- 關掉外掛預設的 <leader>ex*，改用 <leader>ke* 前綴
     add_default_keybindings = false,
   },
+  config = function(_, opts)
+    require("exercism").setup(opts)
+
+    -- termim 的 TermOpen 會 `set cmdheight=1`，而 noice 平常是 cmdheight=0。
+    -- 選題目後 :edit <dir> 會開 yazi（terminal），底部因此多出一行空白；
+    -- 這裡在 TermOpen 處理完後把 cmdheight 還原。
+    local cmdheight = vim.o.cmdheight
+    vim.api.nvim_create_autocmd("TermOpen", {
+      callback = function()
+        vim.schedule(function()
+          vim.o.cmdheight = cmdheight
+        end)
+      end,
+    })
+  end,
   keys = {
     { "<leader>kea", "<cmd>Exercism languages<cr>", desc = "Exercism Languages" },
     { "<leader>kel", "<cmd>Exercism list<cr>", desc = "Exercism List" },
