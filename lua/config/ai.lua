@@ -1,6 +1,6 @@
 -- 決定這台機器該用哪一種 AI 補全後端。
 -- 兩台機器 hostname 都是 OvO，所以只能靠硬體特徵分辨：
---   桌機 = chassis_type 3、無電池  → minuet + llamastash 本機模型
+--   桌機 = chassis_type 3、無電池  → llama.vim + llamastash 本機模型
 --   筆電 = chassis_type 10、有電池 → neocodeium（Windsurf 雲端）
 local M = {}
 
@@ -50,9 +50,9 @@ function M.is_laptop()
 end
 
 ---目前這台機器要用的補全後端
----@return "minuet"|"neocodeium"
+---@return "llama"|"neocodeium"
 function M.provider()
-  return M.is_laptop() and "neocodeium" or "minuet"
+  return M.is_laptop() and "neocodeium" or "llama"
 end
 
 ---手動覆寫 profile（已停用）

@@ -20,28 +20,6 @@ return {
         ["<C-f>"] = { "scroll_documentation_down", "fallback" },
 
         ["<C-k>"] = { "show_signature", "hide_signature", "fallback" },
-
-        -- Manual AI completion (does not auto-trigger). Backend 由 config.ai 決定。
-        ["<A-y>"] = {
-          function(cmp)
-            if require("config.ai").provider() == "neocodeium" then
-              local ok, neocodeium = pcall(require, "neocodeium")
-              if not ok then
-                vim.notify("NeoCodeium is not ready; press <leader>aa first", vim.log.levels.WARN)
-                return
-              end
-              neocodeium.cycle_or_complete()
-              return
-            end
-
-            local ok, minuet = pcall(require, "minuet")
-            if not (ok and minuet.config) then
-              vim.notify("Minuet is not ready; press <leader>aa first", vim.log.levels.WARN)
-              return
-            end
-            minuet.make_blink_map()[1](cmp)
-          end,
-        },
       },
       completion = {
         trigger = { prefetch_on_insert = false },
@@ -69,21 +47,6 @@ return {
         -- `lsp`, `buffer`, `snippets`, `path` and `omni` are built-in
         -- so you don't need to define them in `sources.providers`
         default = { "lsp", "buffer", "snippets", "path" },
-        -- providers = {
-        --   lsp = { score_offset = 3 },
-        --   buffer = { score_offset = 2 },
-        --   snippets = { score_offset = 1 },
-        --   path = { score_offset = 0 },
-        -- Manual only; not in `default` to avoid double requests.
-        providers = {
-          minuet = {
-            name = "minuet",
-            module = "minuet.blink",
-            async = true,
-            timeout_ms = 2000,
-            score_offset = 50,
-          },
-        },
       },
     },
   },

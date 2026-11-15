@@ -1,5 +1,5 @@
 -- 筆電軌：Windsurf（前 Codeium）免費層，Tab autocomplete 無限。
--- 只在這台機器是需要雲端補全的筆電時載入；桌機走 minuet.lua。
+-- 只在這台機器是需要雲端補全的筆電時載入；桌機走 llama.lua。
 local ai = require("config.ai")
 local started = false
 
@@ -33,7 +33,7 @@ return {
         mode = "n",
         desc = "Toggle AI completion",
       },
-      -- 與 minuet 同一組鍵，兩台機器肌肉記憶一致
+      -- 與 llama.vim 同一組鍵，兩台機器肌肉記憶一致
       {
         "<A-f>",
         function()
@@ -140,8 +140,8 @@ return {
     },
     config = function(_, opts)
       require("neocodeium").setup(opts)
-      -- 與 minuet 的 ghost text 同色
-      vim.api.nvim_set_hl(0, "NeoCodeiumSuggestion", { fg = "#627C62" })
+      -- 與 llama.vim 的 ghost text 同色
+      vim.api.nvim_set_hl(0, "NeoCodeiumSuggestion", { fg = "#b07a50" })
       vim.api.nvim_set_hl(0, "NeoCodeiumLabel", { link = "DiagnosticInfo", reverse = true })
       vim.api.nvim_set_hl(0, "NeoCodeiumSingleLineLabel", { fg = "#808080", bold = true })
 
